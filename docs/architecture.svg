@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <rect width="1200" height="520" fill="#f7f5ef"/>
+  <text x="70" y="70" font-family="Arial" font-size="34" font-weight="700" fill="#173f33">Career Compass — Architecture</text>
+  <g font-family="Arial" text-anchor="middle">
+    <rect x="60" y="170" width="220" height="150" rx="22" fill="#fff" stroke="#28634e" stroke-width="3"/>
+    <text x="170" y="220" font-size="22" font-weight="700" fill="#173f33">Streamlit UI</text>
+    <text x="170" y="258" font-size="16" fill="#4c6259">CV upload</text><text x="170" y="284" font-size="16" fill="#4c6259">Job description</text>
+    <rect x="370" y="170" width="220" height="150" rx="22" fill="#173f33"/>
+    <text x="480" y="220" font-size="22" font-weight="700" fill="#fff">Strands Agent</text>
+    <text x="480" y="258" font-size="16" fill="#d6ebe2">Orchestrates analysis</text><text x="480" y="284" font-size="16" fill="#d6ebe2">Grounded prompting</text>
+    <rect x="680" y="110" width="220" height="130" rx="22" fill="#e8a23a"/>
+    <text x="790" y="164" font-size="21" font-weight="700" fill="#292014">Skill-gap tool</text><text x="790" y="198" font-size="16" fill="#4f3d23">Deterministic evidence</text>
+    <rect x="680" y="280" width="220" height="130" rx="22" fill="#d86b50"/>
+    <text x="790" y="334" font-size="21" font-weight="700" fill="#fff">Amazon Bedrock</text><text x="790" y="368" font-size="16" fill="#fff">Personalized report</text>
+    <rect x="990" y="170" width="160" height="150" rx="22" fill="#fff" stroke="#28634e" stroke-width="3"/>
+    <text x="1070" y="220" font-size="21" font-weight="700" fill="#173f33">Output</text><text x="1070" y="255" font-size="15" fill="#4c6259">Match + gaps</text><text x="1070" y="280" font-size="15" fill="#4c6259">Letter + prep</text>
+  </g>
+  <g stroke="#28634e" stroke-width="4" fill="none"><path d="M280 245h80"/><path d="M590 220l80-35"/><path d="M590 270l80 50"/><path d="M900 245h80"/></g>
+  <g fill="#28634e"><path d="M360 245l-14-8v16z"/><path d="M670 185l-14-3 7 15z"/><path d="M670 320l-15-1 8 14z"/><path d="M980 245l-14-8v16z"/></g>
+  <text x="70" y="470" font-family="Arial" font-size="16" fill="#566b62">Privacy-first prototype: CV data is processed in memory; local fallback keeps the demo usable without cloud credentials.</text>
+</svg>
+
