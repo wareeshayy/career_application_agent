@@ -1,17 +1,15 @@
-"""Custom Strands tools for grounded CV/job comparison."""
-
+"""Custom Strands tools for evidence-grounded document navigation."""
 from strands import tool
-
-from .analysis import compare_cv_to_job
+from .analysis import inspect_document
 
 
 @tool
-def skill_gap_analyzer(cv_text: str, job_description: str) -> dict:
-    """Compare explicit skills in a CV with a job description.
+def requirement_mapper(document_text: str, user_context: str) -> dict:
+    """Extract explicit deadlines, requirements, and risks from a document.
 
     Args:
-        cv_text: Plain text extracted from the candidate's CV.
-        job_description: The complete target job description.
+        document_text: Text extracted from the user's document.
+        user_context: The user's stated goal and already-available items.
     """
-    return compare_cv_to_job(cv_text, job_description)
+    return inspect_document(document_text, user_context)
 

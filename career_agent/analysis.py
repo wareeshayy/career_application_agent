@@ -1,63 +1,80 @@
-"""Deterministic baseline analysis used by tools and demo mode."""
-
+"""Deterministic document triage for ProofPath."""
 import re
+from datetime import date
 
-SKILLS = (
-    "python", "javascript", "typescript", "react", "node.js", "node", "java",
-    "sql", "aws", "amazon bedrock", "docker", "kubernetes", "git", "figma",
-    "excel", "power bi", "tableau", "communication", "leadership", "marketing",
-    "seo", "project management", "data analysis", "machine learning", "strands",
-    "fastapi", "streamlit", "html", "css", "mongodb", "postgresql",
+DATE_PATTERNS = (
+    r"\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:,\s*\d{4})?\b",
+    r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b", r"\b\d{4}-\d{2}-\d{2}\b",
 )
+REQUIREMENT_WORDS = ("must", "required", "provide", "submit", "attach", "include", "bring", "need to")
+RISK_WORDS = ("penalty", "denied", "rejected", "cancelled", "canceled", "late fee", "legal action", "terminate", "suspended")
 
 
-def _has_skill(text: str, skill: str) -> bool:
-    return bool(re.search(rf"(?<!\w){re.escape(skill)}(?!\w)", text.lower()))
+def _sentences(text: str) -> list[str]:
+    cleaned = re.sub(r"[\t ]+", " ", text.replace("\r", "\n"))
+    return [p.strip(" •-\n") for p in re.split(r"(?<=[.!?])\s+|\n+", cleaned) if len(p.strip()) > 3]
 
 
-def compare_cv_to_job(cv_text: str, job_text: str) -> dict:
-    required = [skill for skill in SKILLS if _has_skill(job_text, skill)]
-    matched = [skill for skill in required if _has_skill(cv_text, skill)]
-    missing = [skill for skill in required if skill not in matched]
-    score = round(100 * len(matched) / len(required)) if required else 0
-    return {"score": score, "required": required, "matched": matched, "missing": missing}
+def inspect_document(document_text: str, user_context: str = "") -> dict:
+    dates = []
+    for pattern in DATE_PATTERNS:
+        dates.extend(re.findall(pattern, document_text, flags=re.IGNORECASE))
+    sentences = _sentences(document_text)
+    return {
+        "dates": list(dict.fromkeys(dates))[:10],
+        "requirements": [s for s in sentences if any(w in s.lower() for w in REQUIREMENT_WORDS)][:12],
+        "risks": [s for s in sentences if any(w in s.lower() for w in RISK_WORDS)][:8],
+        "context_provided": bool(user_context.strip()), "generated_on": date.today().isoformat(),
+    }
 
 
-def baseline_report(cv_text: str, job_text: str) -> str:
-    result = compare_cv_to_job(cv_text, job_text)
-    matched = ", ".join(result["matched"]) or "No exact keyword matches found"
-    missing = ", ".join(result["missing"]) or "No obvious keyword gaps found"
-    return f"""## Match overview
+def baseline_report(document_text: str, user_context: str) -> str:
+    result = inspect_document(document_text, user_context)
+    dates = "\n".join(f"- {x}" for x in result["dates"]) or "- No explicit date detected—verify manually."
+    reqs = "\n".join(f"- [ ] {x}" for x in result["requirements"]) or "- [ ] No explicit requirement detected—ask the issuer."
+    risks = "\n".join(f"- {x}" for x in result["risks"]) or "- No explicit penalty or rejection language detected."
+    context = user_context.strip() or "No personal situation was provided."
+    return f"""## Plain-language overview
 
-**Keyword match score: {result['score']}%**
+This document appears to communicate an administrative request or decision. Verify every extracted detail against the original document before acting.
 
-Matched skills: {matched}
+**Your stated situation:** {context}
 
-Potential gaps: {missing}
+## Important dates
+{dates}
 
-## CV improvements
+## Requirements checklist
+{reqs}
 
-1. Put the most relevant experience and matched skills near the top.
-2. Add measurable outcomes (time saved, revenue, users, accuracy, or growth) to achievement bullets.
-3. Address the potential gaps only when you genuinely have that experience—never invent a skill.
-4. Mirror the employer's language naturally while keeping every claim accurate.
+## Risk flags
+{risks}
 
-## Cover-letter draft
+## Missing information to confirm
+- [ ] Who exactly should receive the response?
+- [ ] Is submission by portal, email, post, or in person?
+- [ ] Will you receive proof of submission?
+- [ ] Are copies accepted, or are originals/certified copies required?
 
-Dear Hiring Manager,
+## Step-by-step action plan
+1. Compare every extracted item with the original document.
+2. Ask the issuer about unclear deadlines or requirements.
+3. Collect required items and keep copies.
+4. Submit before the earliest confirmed deadline.
+5. Save the receipt, confirmation, tracking number, or screenshot.
+6. Follow up if confirmation does not arrive.
 
-I am excited to apply for this opportunity. My background includes {matched.lower()}, which aligns with key parts of the role. I am especially interested in contributing practical, measurable work while continuing to grow in the areas the position requires. I would welcome the chance to discuss how my experience and approach can support your team.
+## Follow-up message draft
+**Subject: Clarification regarding document requirements**
 
-Sincerely,  
+Hello,
+
+I received your document and am preparing the requested information. Please confirm the complete list of required items, final deadline, accepted submission method, whether copies are acceptable, and whether I will receive proof of submission.
+
+Thank you,
+
 [Your name]
 
-## Interview preparation
+[Reference or case number]
 
-- Prepare one STAR story showing how you used a matched skill to create a measurable result.
-- Explain a relevant challenge, your specific contribution, and what you learned.
-- Be ready to discuss how you would close one genuine skill gap in your first 30 days.
-- Ask: “What would success look like in the first 90 days?”
-
-> This is decision support, not a hiring decision. Review and personalize all generated text before using it.
+> ProofPath provides organizational assistance, not legal, medical, immigration, or financial advice. Verify critical details with the issuer or a qualified professional.
 """
-

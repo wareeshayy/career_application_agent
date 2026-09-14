@@ -1,6 +1,5 @@
-"""Career Compass agent package."""
+"""ProofPath agent package."""
 
-from .workflow import analyze_application
+from .workflow import navigate_document
 
-__all__ = ["analyze_application"]
-
+__all__ = ["navigate_document"]
