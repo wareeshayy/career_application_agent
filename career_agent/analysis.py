@@ -34,6 +34,10 @@ def baseline_report(document_text: str, user_context: str) -> str:
     reqs = "\n".join(f"- [ ] {x}" for x in result["requirements"]) or "- [ ] No explicit requirement detected—ask the issuer."
     risks = "\n".join(f"- {x}" for x in result["risks"]) or "- No explicit penalty or rejection language detected."
     context = user_context.strip() or "No personal situation was provided."
+    evidence = "\n".join(
+        f"- **REQ-{index:02d}** — `{item}` *(explicit; awaiting human verification)*"
+        for index, item in enumerate(result["requirements"], start=1)
+    ) or "- No evidence-backed requirement nodes were created."
     return f"""## Plain-language overview
 
 This document appears to communicate an administrative request or decision. Verify every extracted detail against the original document before acting.
@@ -45,6 +49,9 @@ This document appears to communicate an administrative request or decision. Veri
 
 ## Requirements checklist
 {reqs}
+
+## Evidence ledger
+{evidence}
 
 ## Risk flags
 {risks}
@@ -62,6 +69,10 @@ This document appears to communicate an administrative request or decision. Veri
 4. Submit before the earliest confirmed deadline.
 5. Save the receipt, confirmation, tracking number, or screenshot.
 6. Follow up if confirmation does not arrive.
+
+## Human checkpoint
+
+Confirm each REQ item against the original document before marking the path complete. ProofPath never treats an inferred item as an official requirement.
 
 ## Follow-up message draft
 **Subject: Clarification regarding document requirements**

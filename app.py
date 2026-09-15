@@ -9,6 +9,7 @@ st.markdown("""
 .stApp{background:#f5f1e8;color:#18231e}.hero{padding:2.6rem;border-radius:26px;background:linear-gradient(120deg,#142f29,#315c4e);color:white;margin-bottom:1.5rem}.hero h1{font-size:3.3rem;margin:.15rem 0 .45rem;letter-spacing:-.05em}.hero p{font-size:1.08rem;opacity:.88;max-width:760px}.eyebrow,.step{font-size:.75rem;text-transform:uppercase;letter-spacing:.14em;font-weight:750}.step{color:#8a5a32}[data-testid="stButton"] button{background:#d76847;color:white;border:0;border-radius:999px;font-weight:700}
 </style><div class="hero"><div class="eyebrow">DOCUMENT → DECISIONS → DONE</div><h1>ProofPath</h1><p>Turn a confusing official document into clear requirements, verified deadlines, risk flags, and a step-by-step completion plan.</p></div>
 """, unsafe_allow_html=True)
+st.caption("Evidence Graph · Strands tool use · Human verification · MCP-ready")
 with st.sidebar:
     st.header("Your path")
     st.write("1. Add a document\n\n2. Explain your situation\n\n3. Generate an action path")
@@ -40,4 +41,3 @@ if st.button("Build my ProofPath →", type="primary", use_container_width=True)
         st.error(f"Could not process this document: {exc}")
 st.divider()
 st.caption("ProofPath highlights uncertainty and keeps you in control. Always verify critical details against the original document.")
-

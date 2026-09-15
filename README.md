@@ -10,7 +10,7 @@ People routinely receive dense university, benefits, insurance, housing, governm
 
 ## What makes it agentic
 
-A Strands Agent calls the deterministic `requirement_mapper`, distinguishes explicit facts from suggestions, identifies missing information, and produces an actionable completion path. Amazon Bedrock personalizes the explanation—including Roman Urdu when requested. A local fallback keeps the demo reliable.
+A Strands Agent calls the deterministic `requirement_mapper`, builds an **Evidence Graph**, distinguishes explicit facts from suggestions, identifies missing information, and produces an actionable completion path. Every requirement node keeps its exact source excerpt, confidence label, verification state, and fingerprint. Amazon Bedrock personalizes the explanation—including Roman Urdu when requested. A local fallback keeps the demo reliable.
 
 ## Features
 
@@ -21,6 +21,9 @@ A Strands Agent calls the deterministic `requirement_mapper`, distinguishes expl
 - Amazon Bedrock integration plus local fallback
 - Downloadable Markdown report
 - Anti-injection and anti-fabrication instructions
+- Evidence-linked requirement graph with provenance hashes
+- Human-in-the-loop verification checkpoint
+- MCP server so other AI clients can reuse ProofPath as a tool
 
 ## Run
 
@@ -42,6 +45,26 @@ streamlit run app.py
 5. Bedrock creates a grounded action path.
 6. The user verifies and downloads the checklist.
 
+## Architecture pattern
+
+The code follows a lightweight Model–Controller–View separation:
+
+- **Model:** `career_agent/analysis.py`, `evidence_graph.py`, and `parser.py`
+- **Controller:** `career_agent/workflow.py` and its Strands tool orchestration
+- **View:** `app.py`, a Streamlit interface
+
+MVC is the maintainability pattern; the AI concepts are tool use, evidence provenance, structured dependency graphs, bounded generation, graceful model fallback, and human-in-the-loop verification.
+
+## MCP integration
+
+ProofPath exposes its evidence mapper as a local Model Context Protocol server:
+
+```powershell
+python mcp_server.py
+```
+
+MCP clients can call `map_document_requirements` to receive nodes, edges, unknowns, dates, risks, a document fingerprint, and a mandatory human-verification flag.
+
 ## Responsible use
 
 ProofPath provides organizational assistance—not legal, medical, immigration, or financial advice. It never determines eligibility or invents missing facts. Confirm critical information with the issuer or a qualified professional.
@@ -55,4 +78,3 @@ python -m pytest -q
 ## License
 
 MIT
-

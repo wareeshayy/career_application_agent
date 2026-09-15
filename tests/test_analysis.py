@@ -1,4 +1,5 @@
 from career_agent.analysis import inspect_document
+from career_agent.evidence_graph import build_evidence_graph
 
 
 def test_extracts_dates_requirements_and_risks():
@@ -16,3 +17,11 @@ def test_no_invented_dates_or_requirements():
     assert result["requirements"] == []
     assert result["risks"] == []
 
+
+def test_evidence_graph_preserves_source_and_requires_human_check():
+    text = "You must submit a passport before registration."
+    graph = build_evidence_graph(text)
+    assert graph["nodes"][0]["id"] == "REQ-01"
+    assert graph["nodes"][0]["evidence"] == text
+    assert graph["nodes"][0]["confidence"] == "explicit"
+    assert graph["human_verification_required"] is True
